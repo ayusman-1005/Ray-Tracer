@@ -16,11 +16,16 @@ private:
 	uint32_t m_ViewPortWidth  = 0;
 	uint32_t m_ViewPortHeight = 0;
 	float	 m_LastRenderTime = 0.f;
+	float    m_viewport_iterator = 0.0f;
 public:
 	virtual void OnUIRender() override
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render Time: %0.3f ms", m_LastRenderTime);
+		if (ImGui::Button("change ray origin")) {
+			m_viewport_iterator += 1.0f;
+			m_Renderer.ray_origin = { 0.0f, 2.0f + m_viewport_iterator, 3.0f };
+		};
 		if (ImGui::Button("Render")) {
 			Render();
 		};
@@ -29,11 +34,12 @@ public:
 		ImGui::Begin("Viewport");
 		m_ViewPortWidth = ImGui::GetContentRegionAvail().x;
 		m_ViewPortHeight = ImGui::GetContentRegionAvail().y;
-
+		// final image from class instance
 		auto image = m_Renderer.GetFinalImage();
 		if (image) {
 			ImGui::Image(image->GetDescriptorSet(), {
-				(float)image->GetWidth(),(float)image->GetHeight() });
+				(float)image->GetWidth(),(float)image->GetHeight() },
+				ImVec2(0,1),ImVec2(1,0));
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -41,7 +47,6 @@ public:
 	}
 	void Render(){
 		Timer timer;
-
 
 		m_Renderer.OnResize(m_ViewPortWidth, m_ViewPortHeight);
 		m_Renderer.Render();
