@@ -22,10 +22,10 @@ public:
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render Time: %0.3f ms", m_LastRenderTime);
-		if (ImGui::Button("change ray origin")) {
-			m_viewport_iterator += 1.0f;
-			m_Renderer.ray_origin = { 0.0f, 2.0f + m_viewport_iterator, 3.0f };
-		};
+		ImGui::SliderFloat("ray origin X", &m_Renderer.ray_origin.x,-10.0f,10.0f);
+		ImGui::SliderFloat("ray origin Y", &m_Renderer.ray_origin.y,-10.0f,10.0f);
+		ImGui::SliderFloat("ray origin Z", &m_Renderer.ray_origin.z,-10.0f,10.0f);
+		
 		if (ImGui::Button("Render")) {
 			Render();
 		};

@@ -11,9 +11,10 @@ public:
  inline	std::shared_ptr<Walnut::Image> GetFinalImage() { return m_FinalImage; }
 
 private:
-	uint32_t SetPixel(glm::vec2 coord);
+	glm::vec4 SetPixel(glm::vec2 coord);
 private:
 	std::shared_ptr<Walnut::Image> m_FinalImage;
+	float aspect_ratio;
 	uint32_t* m_ImageData = 0;
 public:
 	glm::vec3 ray_origin = { 0.0f, 0.0f, 3.0f };
