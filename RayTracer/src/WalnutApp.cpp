@@ -5,6 +5,7 @@
 #include <cmath>
 #include "Renderer.h"
 #include "Camera.h"
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace Walnut;
 
@@ -13,6 +14,7 @@ class ExampleLayer : public Walnut::Layer
 private:
 	Renderer m_Renderer;
 	Camera   m_camera;
+	Scene	 m_scene;
 	std::shared_ptr<Image> m_Image;
 	uint32_t* m_ImageData = 0;
 	uint32_t m_ViewPortWidth  = 0;
@@ -21,7 +23,26 @@ private:
 	float    m_viewport_iterator = 0.0f;
 public:
 	ExampleLayer() :m_camera(45.0f,0.1f,100.0f)		// constructor for camera
-	{}
+	{	
+		
+		float radius = 1.0f;
+		
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f, 0.0f, 0.0f };
+			sphere.Radius = 1.0f;
+			sphere.Colour = { 1.0f,0.0f,0.0f};
+			m_scene.Spheres.push_back(sphere);
+		}
+		
+		{
+			Sphere sphere;
+			sphere.Position = { 0.0f, 2.0f, 0.0f };
+			sphere.Radius = 1.0f;
+			sphere.Colour = { 1.0f,1.0f,0.0f};
+			m_scene.Spheres.push_back(sphere);
+		}
+	}
 
 	virtual void OnUpdate(float ts) override {
 		m_camera.OnUpdate(ts); // Otherwise drive the camera
@@ -37,6 +58,19 @@ public:
 			Render();
 		};
 		ImGui::End();
+
+		ImGui::Begin("Scene");
+		for (int i =0; i < m_scene.Spheres.size(); i++) {
+			ImGui::PushID(i); //imguim issue 
+			ImGui::DragFloat3("Position", glm::value_ptr(m_scene.Spheres[i].Position), 0.1f);
+			ImGui::DragFloat("Radius", &m_scene.Spheres[i].Radius, 0.1f);
+			ImGui::ColorEdit3("colour", glm::value_ptr(m_scene.Spheres[i].Colour), 0.1f);
+			ImGui::Separator();
+			ImGui::PopID();
+		}
+		ImGui::End();
+
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,0.0f)); // for filling the padding
 		ImGui::Begin("Viewport");
 		m_ViewPortWidth = ImGui::GetContentRegionAvail().x;
@@ -57,7 +91,7 @@ public:
 
 		m_Renderer.OnResize(m_ViewPortWidth, m_ViewPortHeight);
 		m_camera.OnResize(m_ViewPortWidth, m_ViewPortHeight);
-		m_Renderer.Render(m_camera);
+		m_Renderer.Render(m_scene,m_camera);
 
 		m_LastRenderTime = timer.ElapsedMillis();
 	}

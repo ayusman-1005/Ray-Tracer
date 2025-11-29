@@ -21,20 +21,7 @@ bool Camera::OnUpdate(float ts)
 	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
 	m_LastMousePosition = mousePos;
 
-
-	//static bool alt_down= false;			// debouncing logic 
-	//bool alt_new = Input::IsKeyDown(KeyCode::LeftAlt);
-	//bool alt_toggle = (alt_down && alt_new) ? true : false;
-	//alt_down = alt_new;
-
-	static bool free_cam = false;
-	if (Input::IsKeyDown(KeyCode::F))
-		free_cam =true;
-
-	if (Input::IsKeyDown(KeyCode::Escape))
-		free_cam = false;
-
-	if (!free_cam)
+	if (!Input::IsMouseButtonDown(MouseButton::Right))
 	{
 		Input::SetCursorMode(CursorMode::Normal);
 		return false;
